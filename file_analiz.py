@@ -3,10 +3,7 @@ import os
 import time
 import hashlib
 import argparse
-
-
-
-
+from my_test import file_struct_detect
 
 
 def get_type_of_file(file):
@@ -71,17 +68,31 @@ def file_inf(file):
         obj['type']='not identific'
     obj['size']=get_size_of_file(file)
     obj['data_created']=get_data_created_of_file(file)
-    obj['data_last_mod']=get_last_modified_of_file(file)
-    obj['md5']=md5(file)
-    obj['7z']=None
-    if obj['type'].strip() in archives:
-        obj['7z'] =get_data_in_archive(file)
+   # obj['data_last_mod']=get_last_modified_of_file(file)
+   # try:
+   # 	obj['md5']=md5(file)
+   # except :
+   # 	obj['md5']='None'
+    obj['attach']=None
+   # if obj['type'].strip() in archives:
+   #     obj['7z'] =get_data_in_archive(file)
+
+    if obj['type']=='text/plain':
+        obj['struct_text']=file_struct_detect(file)
+    else:
+        obj['struct_text']=''
+
+    if obj['type'] == 'text/xml':
+        obj['struct_text'] = {'type':'xml'}
+
+
+
 
     for i in obj.keys():
         obj[i]=str(obj[i])
         obj[i]='"'+obj[i]+'"'
 
-    return obj['file']+';'+obj['size']+';'+obj['type']+';'+obj['7z']+';'+obj['md5']+';'+obj['data_created']+';'+obj['data_last_mod']+'\n'
+    return obj['file']+';'+obj['struct_text']+';'+obj['size']+';'+obj['type']+';'+obj['attach']+';'+obj['data_created']+'\n'
 
 
 def create(file_for_read,file_for_out):
